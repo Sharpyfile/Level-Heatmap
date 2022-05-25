@@ -20,6 +20,11 @@ void AHeatmapManager::BeginPlay()
 	
 }
 
+FVector2D AHeatmapManager::GetGameViewportSize()
+{
+	return FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
+}
+
 // Called every frame
 void AHeatmapManager::Tick(float DeltaTime)
 {

@@ -21,6 +21,8 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "SaveTxt"))
 		bool SaveTxt(FString SaveTextB, FString FileNameB);	
 
+	UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "ViewportSize"))
+		static FVector2D GetGameViewportSize();
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
