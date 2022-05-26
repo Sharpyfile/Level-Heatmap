@@ -20,7 +20,7 @@ void URingManager::GenerateRings()
 	FVector2D resolution = AHeatmapManager::GetGameViewportSize();
 
 	// For now divide by 3 to get A and B as X and Y
-	resolution /= 4;
+	resolution /= 5;
 
 	FVector A, B, C, D;
 	A = FVector(800, -resolution.X,	-resolution.Y);
@@ -28,14 +28,17 @@ void URingManager::GenerateRings()
 	C = FVector(800, resolution.X,	resolution.Y);	
 	D = FVector(800, -resolution.X,	resolution.Y);
 
-	int count = OuterRingLength - 1;
+	int count = OuterRingLength - 2;
+	FString message = "OuterRingCount: ";
+	message.AppendInt(count);
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, message);
 	OuterRing.Add(A);
 	OuterRing.Add(B);
 	OuterRing.Add(C);
 	OuterRing.Add(D);
 
-	float xLength = (resolution.X * 2) / count;
-	float yLength = (resolution.Y * 2) / count;
+	float xLength = (resolution.X * 2) / (count + 1);
+	float yLength = (resolution.Y * 2) / (count + 1);
 
 	// add to A	
 	for (int i = 0; i < count; ++i)
@@ -44,10 +47,10 @@ void URingManager::GenerateRings()
 		FVector DHorizontal = D;
 		FVector AVertical = A;
 		FVector BVertical = B;
-		AHorizontal.Y += (xLength) * i+1;
-		DHorizontal.Y += (xLength) * i+1;
-		AVertical.Z += (yLength) * i+1;
-		BVertical.Z += (yLength) * i+1;
+		AHorizontal.Y += (xLength) * (i + 1);
+		DHorizontal.Y += (xLength) * (i + 1);
+		AVertical.Z += (yLength) * (i + 1);
+		BVertical.Z += (yLength) * (i + 1);
 		OuterRing.Add(AHorizontal);
 		OuterRing.Add(DHorizontal);
 		OuterRing.Add(AVertical);
@@ -55,22 +58,27 @@ void URingManager::GenerateRings()
 	}
 
 	// Now middle ring, Divide it by 4
-	resolution /= 3;
+	resolution = AHeatmapManager::GetGameViewportSize();
+	resolution /= 12;
 	// Again, same stuff
-	A = FVector(800, -resolution.X, -resolution.Y);
-	B = FVector(800, resolution.X, -resolution.Y);
-	C = FVector(800, -resolution.X, resolution.Y);
-	D = FVector(800, resolution.X, resolution.Y);
+	A = FVector(800, -resolution.X,	-resolution.Y);
+	B = FVector(800, resolution.X,	-resolution.Y);
+	C = FVector(800, resolution.X,	resolution.Y);	
+	D = FVector(800, -resolution.X,	resolution.Y);
 
-	count = MiddleRingLength - 1;
+	count = MiddleRingLength - 2;
+	message = "MiddleRingCount: ";
+	message.AppendInt(count);
 	MiddleRing.Add(A);
 	MiddleRing.Add(B);
 	MiddleRing.Add(C);
 	MiddleRing.Add(D);
 
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, message);
+
 	// add to A	
-	xLength = (resolution.X * 2) / count;
-	yLength = (resolution.Y * 2) / count;
+	xLength = (resolution.X * 2) / (count + 1);
+	yLength = (resolution.Y * 2) / (count + 1);
 
 	// add to A	
 	for (int i = 0; i < count; ++i)
@@ -79,10 +87,10 @@ void URingManager::GenerateRings()
 		FVector DHorizontal = D;
 		FVector AVertical = A;
 		FVector BVertical = B;
-		AHorizontal.Y += (xLength)*i + 1;
-		DHorizontal.Y += (xLength)*i + 1;
-		AVertical.Z += (yLength)*i + 1;
-		BVertical.Z += (yLength)*i + 1;
+		AHorizontal.Y += (xLength) * (i + 1);
+		DHorizontal.Y += (xLength) * (i + 1);
+		AVertical.Z += (yLength) * (i + 1);
+		BVertical.Z += (yLength) * (i + 1);
 		MiddleRing.Add(AHorizontal);
 		MiddleRing.Add(DHorizontal);
 		MiddleRing.Add(AVertical);
