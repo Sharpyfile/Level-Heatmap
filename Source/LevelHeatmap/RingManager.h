@@ -23,13 +23,16 @@ public:
 		TArray<FVector> MiddleRing;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
-		FVector Inner;
+		TArray<FVector> InnerRing;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
 		int OuterRingLength;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
 		int MiddleRingLength;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
+		int InnerRingLength;
 
 	UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "GenerateRings"))
 		void GenerateRings();

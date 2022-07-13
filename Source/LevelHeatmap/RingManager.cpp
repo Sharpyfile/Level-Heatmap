@@ -39,7 +39,7 @@ void URingManager::GenerateRings()
 
 	float xLength = (resolution.X * 2) / (count + 1);
 	float yLength = (resolution.Y * 2) / (count + 1);
-
+	GLog->Log("xLength: " + FString::FromInt(xLength) + " | yLength: " + FString::FromInt(yLength));
 	// add to A	
 	for (int i = 0; i < count; ++i)
 	{
@@ -59,7 +59,7 @@ void URingManager::GenerateRings()
 
 	// Now middle ring, Divide it by 4
 	resolution = AHeatmapManager::GetGameViewportSize();
-	resolution /= 12;
+	resolution /= 10;
 	// Again, same stuff
 	A = FVector(800, -resolution.X,	-resolution.Y);
 	B = FVector(800, resolution.X,	-resolution.Y);
@@ -79,7 +79,7 @@ void URingManager::GenerateRings()
 	// add to A	
 	xLength = (resolution.X * 2) / (count + 1);
 	yLength = (resolution.Y * 2) / (count + 1);
-
+	GLog->Log("xLength: " + FString::FromInt(xLength) + " | yLength: " + FString::FromInt(yLength));
 	// add to A	
 	for (int i = 0; i < count; ++i)
 	{
@@ -95,6 +95,46 @@ void URingManager::GenerateRings()
 		MiddleRing.Add(DHorizontal);
 		MiddleRing.Add(AVertical);
 		MiddleRing.Add(BVertical);
+	}
+
+	// Now inner ring ring, Divide it again
+	resolution = AHeatmapManager::GetGameViewportSize();
+	resolution /= 20;
+	// Again, same stuff
+	A = FVector(800, -resolution.X, -resolution.Y);
+	B = FVector(800, resolution.X, -resolution.Y);
+	C = FVector(800, resolution.X, resolution.Y);
+	D = FVector(800, -resolution.X, resolution.Y);
+
+	count = InnerRingLength - 2;
+	message = "InnerRingLength: ";
+	message.AppendInt(count);
+	InnerRing.Add(A);
+	InnerRing.Add(B);
+	InnerRing.Add(C);
+	InnerRing.Add(D);
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.0f, FColor::Black, message);
+
+	// add to A	
+	xLength = (resolution.X * 2) / (count + 1);
+	yLength = (resolution.Y * 2) / (count + 1);
+	GLog->Log("xLength: " + FString::FromInt(xLength) + " | yLength: " + FString::FromInt(yLength));
+	// add to A	
+	for (int i = 0; i < count; ++i)
+	{
+		FVector AHorizontal = A;
+		FVector DHorizontal = D;
+		FVector AVertical = A;
+		FVector BVertical = B;
+		AHorizontal.Y += (xLength) * (i + 1);
+		DHorizontal.Y += (xLength) * (i + 1);
+		AVertical.Z += (yLength) * (i + 1);
+		BVertical.Z += (yLength) * (i + 1);
+		InnerRing.Add(AHorizontal);
+		InnerRing.Add(DHorizontal);
+		InnerRing.Add(AVertical);
+		InnerRing.Add(BVertical);
 	}
 }
 
