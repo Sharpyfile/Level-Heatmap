@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
+#include "HeatmapObject.h"
 #include "HeatmapManager.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
@@ -25,6 +26,20 @@ FVector2D AHeatmapManager::GetGameViewportSize()
 	return FVector2D(GEngine->GameViewport->Viewport->GetSizeXY());
 }
 
+AHeatmapObject* AHeatmapManager::FindHeatmapObjectByName(FString objectName)
+{
+	for (int i = 0; i < this->HeatmapObjects.Num(); ++i)
+	{
+		if (this->HeatmapObjects[i] != nullptr)
+		{
+			if (this->HeatmapObjects[i]->GetProperName().Equals(objectName))
+				return this->HeatmapObjects[i];
+		}
+	}
+
+	return nullptr;
+}
+
 // Called every frame
 void AHeatmapManager::Tick(float DeltaTime)
 {
@@ -35,6 +50,31 @@ bool AHeatmapManager::LoadTxt(FString FileNameA, FString& SaveTextA)
 {
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FPaths::ProjectDir() + FileNameA);
 	return FFileHelper::LoadFileToString(SaveTextA, *(FPaths::ProjectDir() + FileNameA));
+}
+
+void AHeatmapManager::LoadDataNew()
+{
+	FString temp2;
+	LoadTxt("test.txt", temp2);
+	TArray<FString> Parsed;
+	temp2.ParseIntoArray(Parsed, TEXT("|"), false);
+	FString objectName = "";
+	FString counter = "";
+	for (int i = 0; i < Parsed.Num(); ++i)
+	{
+		objectName = "";
+		counter = "";
+		Parsed[i].Split(TEXT(", "), &objectName, &counter);
+		objectName = objectName.Replace(TEXT("N:"), TEXT(""), ESearchCase::IgnoreCase);
+		counter = counter.Replace(TEXT("C:"), TEXT(""), ESearchCase::IgnoreCase);
+		
+		AHeatmapObject* foundObject = FindHeatmapObjectByName(objectName);
+		if (foundObject != nullptr)
+		{
+			FindHeatmapObjectByName(objectName)->Counter = FCString::Atoi64(*counter);
+		}
+	}
+
 }
 
 bool AHeatmapManager::SaveTxt(FString SaveTextB, FString FileNameB)
