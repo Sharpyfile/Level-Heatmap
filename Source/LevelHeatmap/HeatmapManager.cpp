@@ -67,6 +67,9 @@ void AHeatmapManager::LoadDataNew()
 		Parsed[i].Split(TEXT(", "), &objectName, &counter);
 		objectName = objectName.Replace(TEXT("N:"), TEXT(""), ESearchCase::IgnoreCase);
 		counter = counter.Replace(TEXT("C:"), TEXT(""), ESearchCase::IgnoreCase);
+
+		if (FCString::Atoi64(*counter) == 0)
+			continue;
 		
 		AHeatmapObject* foundObject = FindHeatmapObjectByName(objectName);
 		if (foundObject != nullptr)
