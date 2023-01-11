@@ -12,7 +12,7 @@ AHeatmapObject::AHeatmapObject()
 
 FString AHeatmapObject::GetProperName()
 {
-	return this->GetActorLabel();
+	return this->GetName();
 }
 
 // Called when the game starts or when spawned

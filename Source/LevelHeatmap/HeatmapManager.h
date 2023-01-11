@@ -21,6 +21,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
 		TArray<AHeatmapObject*> HeatmapObjects;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
+		FString LoadTextFile;
+
 	UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "LoadTxt"))
 		bool LoadTxt(FString FileNameA, FString& SaveTextA);
 

@@ -1,8 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
-
-#include "HeatmapObject.h"
 #include "HeatmapManager.h"
+#include "HeatmapObject.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
 
@@ -55,7 +54,7 @@ bool AHeatmapManager::LoadTxt(FString FileNameA, FString& SaveTextA)
 void AHeatmapManager::LoadDataNew()
 {
 	FString temp2;
-	LoadTxt("test.txt", temp2);
+	LoadTxt(LoadTextFile + ".txt", temp2);
 	TArray<FString> Parsed;
 	temp2.ParseIntoArray(Parsed, TEXT("|"), false);
 	FString objectName = "";
