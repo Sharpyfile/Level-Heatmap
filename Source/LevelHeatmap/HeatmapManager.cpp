@@ -59,6 +59,12 @@ void AHeatmapManager::LoadDataNew()
 	temp2.ParseIntoArray(Parsed, TEXT("|"), false);
 	FString objectName = "";
 	FString counter = "";
+
+	// Zero it
+	for (int i = 0; i < HeatmapObjects.Num(); ++i)
+		HeatmapObjects[i]->Counter = 0;
+	
+
 	for (int i = 0; i < Parsed.Num(); ++i)
 	{
 		objectName = "";
