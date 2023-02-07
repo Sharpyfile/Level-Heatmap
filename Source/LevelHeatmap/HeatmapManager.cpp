@@ -51,7 +51,7 @@ bool AHeatmapManager::LoadTxt(FString FileNameA, FString& SaveTextA)
 	return FFileHelper::LoadFileToString(SaveTextA, *(FPaths::ProjectDir() + FileNameA));
 }
 
-void AHeatmapManager::LoadDataNew()
+void AHeatmapManager::LoadDataNew(int cameraType)
 {
 	FString temp2;
 	LoadTxt(LoadTextFile + ".txt", temp2);
@@ -62,8 +62,18 @@ void AHeatmapManager::LoadDataNew()
 
 	// Zero it
 	for (int i = 0; i < HeatmapObjects.Num(); ++i)
-		HeatmapObjects[i]->Counter = 0;
-	
+	{
+		if (cameraType == -1)
+			HeatmapObjects[i]->Counter = 0;
+		else if (cameraType == 0)
+			HeatmapObjects[i]->CounterFPP = 0;
+		else if (cameraType == 1)
+			HeatmapObjects[i]->CounterTPP = 0;
+		else if (cameraType == 2)
+			HeatmapObjects[i]->CounterCS = 0;
+		else
+			HeatmapObjects[i]->Counter = 0;
+	}	
 
 	for (int i = 0; i < Parsed.Num(); ++i)
 	{
@@ -79,7 +89,16 @@ void AHeatmapManager::LoadDataNew()
 		AHeatmapObject* foundObject = FindHeatmapObjectByName(objectName);
 		if (foundObject != nullptr)
 		{
-			FindHeatmapObjectByName(objectName)->Counter = FCString::Atoi64(*counter);
+			if (cameraType == -1)
+				FindHeatmapObjectByName(objectName)->Counter = FCString::Atoi64(*counter);
+			else if (cameraType == 0)
+				FindHeatmapObjectByName(objectName)->CounterFPP = FCString::Atoi64(*counter);
+			else if (cameraType == 1)
+				FindHeatmapObjectByName(objectName)->CounterTPP = FCString::Atoi64(*counter);
+			else if (cameraType == 2)
+				FindHeatmapObjectByName(objectName)->CounterCS = FCString::Atoi64(*counter);
+			else
+				FindHeatmapObjectByName(objectName)->Counter = FCString::Atoi64(*counter);
 		}
 	}
 

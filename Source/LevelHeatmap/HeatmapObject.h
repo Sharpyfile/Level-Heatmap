@@ -19,6 +19,15 @@ public:
 		int64 Counter;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
+		int64 CounterFPP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
+		int64 CounterTPP;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
+		int64 CounterCS;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
 		UMaterialInterface* OriginalMaterial;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Custom")
