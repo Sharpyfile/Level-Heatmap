@@ -33,6 +33,12 @@ public:
 	UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "LoadDataNew"))
 		void LoadDataNew(int cameraType = -1);
 
+	UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "LoadDataAdditiveSpecific"))
+		void LoadDataAdditiveSpecific(FString path, int cameraType = -1);
+
+	UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "LoadDataAdditiveDirectory"))
+		void LoadDataAdditiveDirectory(FString directoryPath, int cameraType = -1);
+
 	UFUNCTION(BlueprintCallable, Category = "Custom", meta = (Keywords = "ViewportSize"))
 		static FVector2D GetGameViewportSize();
 

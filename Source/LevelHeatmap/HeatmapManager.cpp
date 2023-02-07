@@ -4,6 +4,7 @@
 #include "HeatmapObject.h"
 #include "Misc/FileHelper.h"
 #include "Misc/Paths.h"
+#include "HAL/FilemanagerGeneric.h"
 
 // Sets default values
 AHeatmapManager::AHeatmapManager()
@@ -47,7 +48,7 @@ void AHeatmapManager::Tick(float DeltaTime)
 
 bool AHeatmapManager::LoadTxt(FString FileNameA, FString& SaveTextA)
 {
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FPaths::ProjectDir() + FileNameA);
+	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FPaths::ProjectDir() + FileNameA);
 	return FFileHelper::LoadFileToString(SaveTextA, *(FPaths::ProjectDir() + FileNameA));
 }
 
@@ -101,7 +102,71 @@ void AHeatmapManager::LoadDataNew(int cameraType)
 				FindHeatmapObjectByName(objectName)->Counter = FCString::Atoi64(*counter);
 		}
 	}
+}
 
+void AHeatmapManager::LoadDataAdditiveSpecific(FString path, int cameraType)
+{
+	FString temp2;
+	LoadTxt(path, temp2);
+	TArray<FString> Parsed;
+	temp2.ParseIntoArray(Parsed, TEXT("|"), false);
+	FString objectName = "";
+	FString counter = "";
+
+	for (int i = 0; i < Parsed.Num(); ++i)
+	{
+		objectName = "";
+		counter = "";
+		Parsed[i].Split(TEXT(", "), &objectName, &counter);
+		objectName = objectName.Replace(TEXT("N:"), TEXT(""), ESearchCase::IgnoreCase);
+		counter = counter.Replace(TEXT("C:"), TEXT(""), ESearchCase::IgnoreCase);
+
+		if (FCString::Atoi64(*counter) == 0)
+			continue;
+
+		AHeatmapObject* foundObject = FindHeatmapObjectByName(objectName);
+		if (foundObject != nullptr)
+		{
+			if (cameraType == -1)
+				FindHeatmapObjectByName(objectName)->Counter += FCString::Atoi64(*counter);
+			else if (cameraType == 0)
+				FindHeatmapObjectByName(objectName)->CounterFPP += FCString::Atoi64(*counter);
+			else if (cameraType == 1)
+				FindHeatmapObjectByName(objectName)->CounterTPP += FCString::Atoi64(*counter);
+			else if (cameraType == 2)
+				FindHeatmapObjectByName(objectName)->CounterCS += FCString::Atoi64(*counter);
+			else
+				FindHeatmapObjectByName(objectName)->Counter += FCString::Atoi64(*counter);
+		}
+	}
+}
+
+void AHeatmapManager::LoadDataAdditiveDirectory(FString directoryPath, int cameraType)
+{
+	for (int i = 0; i < HeatmapObjects.Num(); ++i)
+	{
+		if (cameraType == -1)
+			HeatmapObjects[i]->Counter = 0;
+		else if (cameraType == 0)
+			HeatmapObjects[i]->CounterFPP = 0;
+		else if (cameraType == 1)
+			HeatmapObjects[i]->CounterTPP = 0;
+		else if (cameraType == 2)
+			HeatmapObjects[i]->CounterCS = 0;
+		else
+			HeatmapObjects[i]->Counter = 0;
+	}
+
+	FString path = FPaths::ProjectDir() + directoryPath + "/";
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, path);
+	TArray<FString> FoundFiles;
+	FFileManagerGeneric::Get().FindFiles(FoundFiles, *path, TEXT(".txt"));
+
+	for (int i = 0; i < FoundFiles.Num(); ++i)
+	{
+		LoadDataAdditiveSpecific(directoryPath + "/" + FoundFiles[i], cameraType);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, directoryPath + "/" + FoundFiles[i]);
+	}
 }
 
 bool AHeatmapManager::SaveTxt(FString SaveTextB, FString FileNameB)
