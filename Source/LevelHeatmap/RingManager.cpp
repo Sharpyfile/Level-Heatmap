@@ -19,7 +19,7 @@ void URingManager::GenerateRings()
 {
 	FVector2D resolution = AHeatmapManager::GetGameViewportSize();
 
-	// For now divide by 3 to get A and B as X and Y
+	// For now divide by 5 to get A and B as X and Y
 	resolution /= 5;
 
 	FVector A, B, C, D;
