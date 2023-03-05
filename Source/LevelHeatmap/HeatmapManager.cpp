@@ -141,32 +141,106 @@ void AHeatmapManager::LoadDataAdditiveSpecific(FString path, int cameraType)
 	}
 }
 
+//void AHeatmapManager::LoadDataAdditiveDirectory(FString directoryPath, int cameraType)
+//{
+//	for (int i = 0; i < HeatmapObjects.Num(); ++i)
+//	{
+//		if (cameraType == -1)
+//			HeatmapObjects[i]->Counter = 0;
+//		else if (cameraType == 0)
+//			HeatmapObjects[i]->CounterFPP = 0;
+//		else if (cameraType == 1)
+//			HeatmapObjects[i]->CounterTPP = 0;
+//		else if (cameraType == 2)
+//			HeatmapObjects[i]->CounterCS = 0;
+//		else
+//			HeatmapObjects[i]->Counter = 0;
+//	}
+//
+//	FString path = FPaths::ProjectDir() + directoryPath + "/";
+//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, path);
+//	TArray<FString> FoundFiles;
+//	FFileManagerGeneric::Get().FindFiles(FoundFiles, *path, TEXT(".txt"));
+//
+//	for (int i = 0; i < FoundFiles.Num(); ++i)
+//	{
+//		LoadDataAdditiveSpecific(directoryPath + "/" + FoundFiles[i], cameraType);
+//		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, directoryPath + "/" + FoundFiles[i]);
+//	}
+//}
+
 void AHeatmapManager::LoadDataAdditiveDirectory(FString directoryPath, int cameraType)
 {
 	for (int i = 0; i < HeatmapObjects.Num(); ++i)
 	{
-		if (cameraType == -1)
-			HeatmapObjects[i]->Counter = 0;
-		else if (cameraType == 0)
-			HeatmapObjects[i]->CounterFPP = 0;
-		else if (cameraType == 1)
-			HeatmapObjects[i]->CounterTPP = 0;
-		else if (cameraType == 2)
-			HeatmapObjects[i]->CounterCS = 0;
-		else
-			HeatmapObjects[i]->Counter = 0;
+		HeatmapObjects[i]->Counter = 0;
+		HeatmapObjects[i]->CounterFPP = 0;
+		HeatmapObjects[i]->CounterTPP = 0;
+		HeatmapObjects[i]->CounterCS = 0;
 	}
 
-	FString path = FPaths::ProjectDir() + directoryPath + "/";
+	FString path = FPaths::ProjectDir() / "Badania/*";
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, path);
+	TArray<FString> FoundDirectories;
+	TArray<FString> FoundSubDirectories;
 	TArray<FString> FoundFiles;
-	FFileManagerGeneric::Get().FindFiles(FoundFiles, *path, TEXT(".txt"));
+	IFileManager& FileManager = IFileManager::Get();
+	FileManager.FindFiles(FoundDirectories, *path, true, true);
 
-	for (int i = 0; i < FoundFiles.Num(); ++i)
+
+	// Level name
+	FString worldName = GetWorld()->GetMapName();
+	worldName.RemoveFromStart(GetWorld()->StreamingLevelsPrefix);
+
+	// L-NL-A, NL-A-L, A-L-NL
+	for (int i = 0; i < FoundDirectories.Num(); ++i)
 	{
-		LoadDataAdditiveSpecific(directoryPath + "/" + FoundFiles[i], cameraType);
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, directoryPath + "/" + FoundFiles[i]);
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FoundDirectories[i]);
+		// 1, 2, 3, 4, 5, 6, etc.
+		FString newPath = path;
+		newPath.RemoveFromEnd(TEXT("*"));
+		newPath += FoundDirectories[i] / TEXT("*");
+		FileManager.FindFiles(FoundSubDirectories, *newPath, true, true);
+
+		// LinearMap-FPP, etc.
+		for (int y = 0; y < FoundSubDirectories.Num(); ++y)
+		{
+			FString newFilePath = newPath;
+			newFilePath.RemoveFromEnd(TEXT("*"));
+			newFilePath += FoundSubDirectories[y] / TEXT("*");
+
+			FileManager.FindFiles(FoundFiles, *newFilePath, true, true);
+
+			// Now check every file and read it
+			for (int z = 0; z < FoundFiles.Num(); ++z)
+			{
+				FString directPath = newFilePath;
+				directPath.RemoveFromEnd(TEXT("*"));
+				directPath += "/" + FoundFiles[z];
+
+				if (FoundFiles[z].Contains(worldName))
+				{
+					if (FoundFiles[z].Contains("FPP"))
+					{
+						LoadDataAdditiveSpecific(directPath, 0);
+					}
+					else if (FoundFiles[z].Contains("TPP"))
+					{
+						LoadDataAdditiveSpecific(directPath, 1);
+					}
+					else if (FoundFiles[z].Contains("CS"))
+					{
+						LoadDataAdditiveSpecific(directPath, 2);
+					}						
+				}			
+			}
+			FoundFiles.Empty();
+		}
+
+		FoundSubDirectories.Empty();
 	}
+
+	FoundDirectories.Empty();
 }
 
 bool AHeatmapManager::SaveTxt(FString SaveTextB, FString FileNameB)
